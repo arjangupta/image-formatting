@@ -76,5 +76,48 @@ int decode_png(uint8_t* png_data,
     // tell libpng we already read the signature
     png_set_sig_bytes(png_ptr, kPngSignatureLength);
 
+    png_read_info(png_ptr, info_ptr);
+
+    png_uint_32 width_uint = 0;
+    png_uint_32 height_uint = 0;
+    int bitDepth = 0;
+    int colorType = -1;
+    png_uint_32 retval = png_get_IHDR(png_ptr, info_ptr,
+                                       &width_uint,
+                                       &height_uint,
+                                       &bitDepth,
+                                       &colorType,
+                                       NULL, NULL, NULL);
+
+    if(retval != 1)
+    {
+       return 96; // TODO: Add error enums & cleanup
+    }
+
+    switch (colorType)
+    {
+        case PNG_COLOR_TYPE_GRAY:
+            std::cout << "colorType is grayscale." << std::endl;
+            break;
+
+        case PNG_COLOR_TYPE_GRAY_ALPHA:
+            std::cout << "colorType is grayscale alpha." << std::endl;
+            break;
+
+        case PNG_COLOR_TYPE_RGB:
+            std::cout << "colorType is RGB." << std::endl;
+            break;
+
+        case PNG_COLOR_TYPE_RGBA:
+            std::cout << "colorType is RGBA." << std::endl;
+            break;
+
+        default:
+            png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+            return 95;
+    }
+
+    std::cout << "The bit depth is: " << bitDepth << std::endl;
+
     return 0;
 }
