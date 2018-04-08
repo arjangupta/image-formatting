@@ -11,10 +11,10 @@ namespace // anonymous
 TEST(decode_png_test, general_test1)
 {
     // Read data from PNG file
-    std::string input_filename = "test/data/png_input/lion.png";
+    std::string input_filename = "test/lion.png";
     std::ifstream fin(input_filename, std::ios::binary);
 
-    ASSERT_TRUE(fin) << "Could not open "
+    ASSERT_TRUE(fin) << "\nCould not open " << input_filename << "\n";
 
     // Get length of file
     fin.seekg(0, fin.end);
