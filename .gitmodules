@@ -1,0 +1,3 @@
+[submodule "3rdparty/libpng"]
+	path = 3rdparty/libpng
+	url = git@github.com:glennrp/libpng.git
