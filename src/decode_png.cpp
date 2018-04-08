@@ -39,7 +39,7 @@ int decode_png(uint8_t* png_data,
                size_t &width, 
                size_t &height, 
                uint8_t &num_channels, 
-               std::vector<uint8_t> output_vector)
+               std::vector<uint8_t> &output_vector)
 {
     std::cout << "PNG DEBUG STATEMENT 1\n";
 
@@ -121,7 +121,7 @@ int decode_png(uint8_t* png_data,
             return 95;
     }
 
-    // TODO: Remove these couts
+    // TODO: Move these couts to test exec
     std::cout << "The bit depth is: " << bitDepth << std::endl;
     width = width_uint;
     std::cout << "The width is: " << width << std::endl;
@@ -130,6 +130,11 @@ int decode_png(uint8_t* png_data,
 
     const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
     uint8_t* row_data = new uint8_t[bytes_per_row];
+
+    if ( bytes_per_row != width * num_channels )
+    {
+        return 94;
+    }
 
     // Get output_vector ready to store data
     output_vector.reserve(width * height * num_channels);
@@ -150,7 +155,9 @@ int decode_png(uint8_t* png_data,
         }
     }
 
+    // Clean up
     delete[] row_data;
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
     return 0;
 }
