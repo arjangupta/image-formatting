@@ -18,15 +18,25 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall")
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
-# Get ZLIB
-find_package(ZLIB REQUIRED)
-include_directories(${ZLIB_INCLUDE_DIR})
+# Get static zlib ready to be added
+find_library( Z_LIB_STATIC
+  NAMES libz.a
+  PATHS ${CMAKE_CURRENT_LIST_DIR}/3rdparty/prebuilts/
+  NO_DEFAULT_PATH
+)
 
 # Get static libpng ready to be added
 find_library(PNG_LIB_STATIC
     NAMES libpng16.a 
     PATHS ${CMAKE_CURRENT_LIST_DIR}/3rdparty/build_png/
     NO_DEFAULT_PATH
+)
+
+# Properly import the static libz
+include_directories(${CMAKE_CURRENT_LIST_DIR}/3rdparty/zlib/)
+add_library( z STATIC IMPORTED GLOBAL )
+set_target_properties( z PROPERTIES
+  IMPORTED_LOCATION ${Z_LIB_STATIC}
 )
 
 # Properly import the static libpng
@@ -42,5 +52,5 @@ add_library(decode-png STATIC src/decode_png.cpp )
 
 # Test executable
 add_executable( test-decode-png test/test_decode_png.cpp )
-add_dependencies( test-decode-png GTest::main ${ZLIB_LIBRARY} png decode-png)
-target_link_libraries( test-decode-png GTest::main ${ZLIB_LIBRARY} png decode-png )
+add_dependencies( test-decode-png GTest::main z png decode-png)
+target_link_libraries( test-decode-png GTest::main z png decode-png )
