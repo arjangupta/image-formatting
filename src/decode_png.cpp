@@ -144,13 +144,13 @@ int decode_png(uint8_t* png_data,
     {
         png_read_row(png_ptr, (png_bytep)row_data, NULL);
 
-        const size_t start_of_current_row = row_index * width;
+        //const size_t start_of_current_row = row_index * width;
 
         for (size_t column_index = 0; column_index < width; ++column_index)
         {
             for (size_t channel_index = 0; channel_index < num_channels; ++channel_index)
             {
-                output_vector.push_back(start_of_current_row + column_index + channel_index);
+                output_vector.push_back(row_data[column_index + channel_index]);
             }
         }
     }
