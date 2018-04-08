@@ -1,2 +1,4 @@
 build/
 3rdparty/build_png/
+test/png_input/
+test/png_output/
