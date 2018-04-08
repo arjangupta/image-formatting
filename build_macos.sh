@@ -1,4 +1,4 @@
-rm -rf build_macos/
-cmake -H. -Bbuild_macos
-cd build_macos/
+rm -rf build/
+cmake -H. -Bbuild
+cd build/
 make -j 4
