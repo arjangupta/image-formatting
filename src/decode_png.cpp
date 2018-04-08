@@ -1,3 +1,4 @@
+#include "decode_png.h"
 #include <iostream>
 
 int decode_png()
