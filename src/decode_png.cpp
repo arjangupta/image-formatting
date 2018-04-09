@@ -101,8 +101,6 @@ int decode_png(uint8_t* png_data,
     // enums in this image-compression interface.
     if(bit_depth == 16)
     {
-        // TODO: Remove this cout
-        std::cout << "Converting from 16 to 8 bit_depth" << std::endl;
         png_set_strip_16(png_ptr);
     }
 
@@ -151,9 +149,7 @@ int decode_png(uint8_t* png_data,
     // Update all changes
     png_read_update_info(png_ptr, info_ptr);
 
-    // TODO: Remove this after testing
     bit_depth = (int)png_get_bit_depth(png_ptr, info_ptr);
-    std::cout << "The bit depth is: " << bit_depth << std::endl;
 
     num_channels = png_get_rowbytes(png_ptr, info_ptr) / (width * (bit_depth/8));
 
