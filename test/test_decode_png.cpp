@@ -11,7 +11,7 @@ namespace // anonymous
 TEST(decode_png_test, general_test1)
 {
     // Read data from PNG file
-    std::string input_filepath = "test/png_input/palette/clouds.png";
+    std::string input_filepath = "test/png_input/rgba/bald-eagle.png";
     std::ifstream fin(input_filepath, std::ios::binary);
 
     ASSERT_TRUE(fin) << "\nCould not open " << input_filepath << "\n";
@@ -28,7 +28,7 @@ TEST(decode_png_test, general_test1)
     std::cout << "Size of input png image is " << length << std::endl;
 
     size_t width = 0, height = 0;
-    uint8_t num_channels = 0;
+    uint32_t num_channels = 0;
     std::vector<uint8_t> output_vector;
     int ret = decode_png(png_data, length, width, height, num_channels, output_vector);
 

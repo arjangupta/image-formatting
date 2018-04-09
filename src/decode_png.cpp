@@ -37,7 +37,7 @@ int decode_png(uint8_t* png_data,
                size_t png_length,
                size_t &width, 
                size_t &height, 
-               uint8_t &num_channels, 
+               uint32_t &num_channels, 
                std::vector<uint8_t> &output_vector)
 {
     if ( !png_check_sig(png_data, kPngSignatureLength) )
