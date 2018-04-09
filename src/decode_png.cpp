@@ -111,12 +111,9 @@ int decode_png(uint8_t* png_data,
             if (bit_depth < 8)
             {
                 png_set_expand_gray_1_2_4_to_8(png_ptr);
+                bit_depth = 8;
             }
-            
-            else
-            {
-                num_channels = 1;
-            }
+            num_channels = 1;
             break;
 
         case PNG_COLOR_TYPE_GRAY_ALPHA:
@@ -132,6 +129,12 @@ int decode_png(uint8_t* png_data,
 
         case PNG_COLOR_TYPE_PALETTE:
             std::cout << "colorType is palette." << std::endl;
+            if (bit_depth < 8)
+            {
+                std::cout << "Bit-depth of palette is less than 8." << std::endl;
+                png_set_expand(png_ptr); // expand to 8 bit-depth
+                bit_depth = 8;
+            }
             png_set_palette_to_rgb(png_ptr);
             num_channels = 4;
             break;
@@ -146,37 +149,15 @@ int decode_png(uint8_t* png_data,
             return 95;
     }
 
+    // Update all changes
+    png_read_update_info(png_ptr, info_ptr);
+
     // TODO: Move these couts to test exec
     std::cout << "The bit depth is: " << bit_depth << std::endl;
     width = width_uint32;
     std::cout << "The width is: " << width << std::endl;
     height = height_uint32;
     std::cout << "The height is: " << height << std::endl;
-
-    // TODO: Decide if we want to check for tRNS chunks
-
-    // Expand tRNS chunks to alpha
-    // if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-    // {
-    //     // TODO: Remove cout
-    //     std::cout << "Expanding tRNS chunks to alpha channel" << std::endl;
-    //     png_set_tRNS_to_alpha(png_ptr);
-    //     // num_channels++; ???
-    // }
-
-    // TODO: Decide if we want to make everything have alpha channel
-
-    // These color_type don't have an alpha channel then fill it with 0xff.
-    // if(color_type == PNG_COLOR_TYPE_RGB ||
-    // color_type == PNG_COLOR_TYPE_GRAY ||
-    // color_type == PNG_COLOR_TYPE_PALETTE)
-    // png_set_filler(png_ptr, 0xFF, PNG_FILLER_AFTER);
-
-    // if(color_type == PNG_COLOR_TYPE_GRAY ||
-    // color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-    // png_set_gray_to_rgb(png_ptr);
-
-    png_read_update_info(png_ptr, info_ptr);
 
     const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
