@@ -77,8 +77,8 @@ int decode_png(uint8_t* png_data,
 
     png_uint_32 width_uint32 = 0;
     png_uint_32 height_uint32 = 0;
-    int bit_depth = 0;
-    int colorType = -1;
+    int bit_depth = 0; // has to be int for png_get_IHDR
+    int colorType = -1; // has to be int for png_get_IHDR
     png_uint_32 retval = png_get_IHDR(png_ptr, info_ptr,
                                       &width_uint32,
                                       &height_uint32,
@@ -115,7 +115,6 @@ int decode_png(uint8_t* png_data,
             {
                 std::cout << "Bit-depth of grayscale is less than 8." << std::endl;
                 png_set_expand_gray_1_2_4_to_8(png_ptr); // expand to 8 bit-depth
-                bit_depth = 8;
             }
             num_channels = 1;
             break;
@@ -138,7 +137,6 @@ int decode_png(uint8_t* png_data,
             {
                 std::cout << "Bit-depth of palette is less than 8." << std::endl;
                 png_set_expand(png_ptr); // expand to 8 bit-depth
-                bit_depth = 8;
             }
             png_set_palette_to_rgb(png_ptr); // this actually becomes rgba
             num_channels = 4;
@@ -159,9 +157,13 @@ int decode_png(uint8_t* png_data,
     png_read_update_info(png_ptr, info_ptr);
 
     // TODO: Remove this after testing
+    bit_depth = (int)png_get_bit_depth(png_ptr, info_ptr);
     std::cout << "The bit depth is: " << bit_depth << std::endl;
 
     const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
+
+    // TODO: Remove this after testing
+    std::cout << "The bytes per row are " << png_get_rowbytes(png_ptr, info_ptr) << std::endl;
 
     if ( bytes_per_row != width * num_channels * (bit_depth/8) )
     {
