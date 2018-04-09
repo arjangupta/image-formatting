@@ -156,10 +156,10 @@ int decode_png(uint8_t* png_data,
     // Get output_vector ready to store data
     output_vector.reserve(width * height * num_channels * (bit_depth/8));
 
-    png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+    png_bytep* row_pointers = new png_bytep[height];
     for(size_t y = 0; y < height; y++)
     {
-        row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png_ptr, info_ptr));
+        row_pointers[y] = new png_byte[png_get_rowbytes(png_ptr, info_ptr)];
     }
 
     png_read_image(png_ptr, row_pointers);
@@ -170,11 +170,13 @@ int decode_png(uint8_t* png_data,
         output_vector.insert(output_vector.end(), row_pointers[y], row_pointers[y] + png_get_rowbytes(png_ptr, info_ptr));
     }
 
-    // Clean up - TODO - use delete
-    for(size_t y = 0; y < height; y++) {
-        free(row_pointers[y]);
+    // Clean up
+
+    for(size_t y = 0; y < height; ++y) 
+    {
+        delete[] row_pointers[y];
     }
-    free(row_pointers);
+    delete[] row_pointers;
 
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
