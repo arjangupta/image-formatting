@@ -116,19 +116,16 @@ int decode_png(uint8_t* png_data,
                 std::cout << "Bit-depth of grayscale is less than 8." << std::endl;
                 png_set_expand_gray_1_2_4_to_8(png_ptr); // expand to 8 bit-depth
             }
-            num_channels = 1;
             break;
 
         case PNG_COLOR_TYPE_GRAY_ALPHA:
             std::cout << "colorType is grayscale alpha." << std::endl;
             // No expansion needed - gray-alpha is always 8 or 16 bit-depth
-            num_channels = 2;
             break;
 
         case PNG_COLOR_TYPE_RGB:
             std::cout << "colorType is RGB." << std::endl;
             // No expansion needed - RGB is always 8 or 16 bit-depth
-            num_channels = 3;
             break;
 
         case PNG_COLOR_TYPE_PALETTE:
@@ -139,13 +136,11 @@ int decode_png(uint8_t* png_data,
                 png_set_expand(png_ptr); // expand to 8 bit-depth
             }
             png_set_palette_to_rgb(png_ptr); // this actually becomes rgba
-            num_channels = 4;
             break;
 
         case PNG_COLOR_TYPE_RGBA:
             std::cout << "colorType is RGBA." << std::endl;
             // No expansion needed - RGBA is always 8 or 16 bit-depth
-            num_channels = 4;
             break;
 
         default:
@@ -162,13 +157,7 @@ int decode_png(uint8_t* png_data,
 
     const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
-    // TODO: Remove this after testing
-    std::cout << "The bytes per row are " << png_get_rowbytes(png_ptr, info_ptr) << std::endl;
-
-    if ( bytes_per_row != width * num_channels * (bit_depth/8) )
-    {
-        return 94;
-    }
+    num_channels = png_get_rowbytes(png_ptr, info_ptr) / (width * (bit_depth/8));
 
     // Get output_vector ready to store data
     output_vector.reserve(width * height * num_channels * (bit_depth/8));
