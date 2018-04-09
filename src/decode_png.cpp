@@ -91,6 +91,10 @@ int decode_png(uint8_t* png_data,
        return 96; // TODO: Add error enums & cleanup
     }
 
+    // Set the width and height
+    width = width_uint32;
+    height = height_uint32;
+
     // TODO: Decide if we want to support 16 bit color.
     // If we want to support it, we should wait till
     // we can use the Image::PixelFormat & Image::DataLayout 
@@ -98,7 +102,7 @@ int decode_png(uint8_t* png_data,
     if(bit_depth == 16)
     {
         // TODO: Remove this cout
-        std::cout << "Converting to 8 bit_depth" << std::endl;
+        std::cout << "Converting from 16 to 8 bit_depth" << std::endl;
         png_set_strip_16(png_ptr);
     }
 
@@ -154,12 +158,8 @@ int decode_png(uint8_t* png_data,
     // Update all changes
     png_read_update_info(png_ptr, info_ptr);
 
-    // TODO: Move these couts to test exec
+    // TODO: Remove this after testing
     std::cout << "The bit depth is: " << bit_depth << std::endl;
-    width = width_uint32;
-    std::cout << "The width is: " << width << std::endl;
-    height = height_uint32;
-    std::cout << "The height is: " << height << std::endl;
 
     const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
