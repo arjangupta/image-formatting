@@ -133,7 +133,7 @@ int decode_png(uint8_t* png_data,
         case PNG_COLOR_TYPE_PALETTE:
             std::cout << "colorType is palette." << std::endl;
             png_set_palette_to_rgb(png_ptr);
-            num_channels = 3;
+            num_channels = 4;
             break;
 
         case PNG_COLOR_TYPE_RGBA:
