@@ -162,23 +162,7 @@ int decode_png(uint8_t* png_data,
     // }
 
     // Get output_vector ready to store data
-    output_vector.reserve(width * height * num_channels);
-
-    // // We will read a single row at a time
-    // for (size_t row_index = 0; row_index < height; ++row_index)
-    // {
-    //     png_read_row(png_ptr, (png_bytep)row_data, NULL);
-
-    //     //const size_t start_of_current_row = row_index * width;
-
-    //     for (size_t column_index = 0; column_index < width; ++column_index)
-    //     {
-    //         // for (size_t channel_index = 0; channel_index < num_channels; ++channel_index)
-    //         // {
-    //             output_vector.push_back(row_data[column_index]);// + channel_index]);
-    //         // }
-    //     }
-    // }
+    output_vector.reserve(width * height * num_channels * (bit_depth/8));
 
     png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
     for(size_t y = 0; y < height; y++)
