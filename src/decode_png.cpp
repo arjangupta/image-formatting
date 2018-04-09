@@ -110,6 +110,7 @@ int decode_png(uint8_t* png_data,
             std::cout << "colorType is grayscale." << std::endl;
             if (bit_depth < 8)
             {
+                std::cout << "Bit-depth of grayscale is less than 8." << std::endl;
                 png_set_expand_gray_1_2_4_to_8(png_ptr);
                 bit_depth = 8;
             }
@@ -124,6 +125,7 @@ int decode_png(uint8_t* png_data,
 
         case PNG_COLOR_TYPE_RGB:
             std::cout << "colorType is RGB." << std::endl;
+            // No expansion needed - RGB is always 8 or 16 bit depth
             num_channels = 3;
             break;
 
@@ -135,12 +137,13 @@ int decode_png(uint8_t* png_data,
                 png_set_expand(png_ptr); // expand to 8 bit-depth
                 bit_depth = 8;
             }
-            png_set_palette_to_rgb(png_ptr);
+            png_set_palette_to_rgb(png_ptr); // this actually becomes rgba
             num_channels = 4;
             break;
 
         case PNG_COLOR_TYPE_RGBA:
             std::cout << "colorType is RGBA." << std::endl;
+            // No expansion needed - RGBA is always 8 or 16 bit depth
             num_channels = 4;
             break;
 
