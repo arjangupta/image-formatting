@@ -35,9 +35,8 @@ TEST(decode_png_test, general_test1)
 
     // Write the png data to an output file
     std::ofstream output;
-    output.open("test/png_output/test_output.ppm");
+    output.open("test/png_output/test_output.data");
     std::cout << "\n\noutput_vector.size() is " << output_vector.size() << "\n\n";
-    //output << "P6\n" << width << " " << height << "\n" << "255\n";
     output.write((char*)output_vector.data(), output_vector.size());
     output.close();
 
