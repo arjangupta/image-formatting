@@ -155,8 +155,6 @@ int decode_png(uint8_t* png_data,
     bit_depth = (int)png_get_bit_depth(png_ptr, info_ptr);
     std::cout << "The bit depth is: " << bit_depth << std::endl;
 
-    const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
-
     num_channels = png_get_rowbytes(png_ptr, info_ptr) / (width * (bit_depth/8));
 
     // Get output_vector ready to store data
