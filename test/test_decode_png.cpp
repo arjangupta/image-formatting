@@ -11,7 +11,7 @@ namespace // anonymous
 TEST(decode_png_test, general_test1)
 {
     // Read data from PNG file
-    std::string input_filename = "mario.png";
+    std::string input_filename = "east_indian_textile_pattern.png";
     std::string input_filepath = "test/png_input/";
     std::ifstream fin(input_filepath.append(input_filename), std::ios::binary);
 

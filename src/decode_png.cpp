@@ -128,35 +128,80 @@ int decode_png(uint8_t* png_data,
     height = height_uint;
     std::cout << "The height is: " << height << std::endl;
 
-    const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
-    uint8_t* row_data = new uint8_t[bytes_per_row];
+  //     if(bit_depth == 16)
+  //   png_set_strip_16(png);
 
-    if ( bytes_per_row != width * num_channels )
-    {
-        return 94;
-    }
+  // if(color_type == PNG_COLOR_TYPE_PALETTE)
+  //   png_set_palette_to_rgb(png);
+
+  // // PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
+  // if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+  //   png_set_expand_gray_1_2_4_to_8(png);
+
+  // if(png_get_valid(png, info, PNG_INFO_tRNS))
+  //   png_set_tRNS_to_alpha(png);
+
+  // These color_type don't have an alpha channel then fill it with 0xff.
+  // if(color_type == PNG_COLOR_TYPE_RGB ||
+  //    color_type == PNG_COLOR_TYPE_GRAY ||
+  //    color_type == PNG_COLOR_TYPE_PALETTE)
+  //   png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
+
+  // if(color_type == PNG_COLOR_TYPE_GRAY ||
+  //    color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  //   png_set_gray_to_rgb(png);
+
+  // png_read_update_info(png, info);
+
+    // const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
+    // uint8_t* row_data = new uint8_t[bytes_per_row];
+
+    // if ( bytes_per_row != width * num_channels )
+    // {
+    //     return 94;
+    // }
 
     // Get output_vector ready to store data
     output_vector.reserve(width * height * num_channels);
 
-    // We will read a single row at a time
-    for (size_t row_index = 0; row_index < height; ++row_index)
+    // // We will read a single row at a time
+    // for (size_t row_index = 0; row_index < height; ++row_index)
+    // {
+    //     png_read_row(png_ptr, (png_bytep)row_data, NULL);
+
+    //     //const size_t start_of_current_row = row_index * width;
+
+    //     for (size_t column_index = 0; column_index < width; ++column_index)
+    //     {
+    //         // for (size_t channel_index = 0; channel_index < num_channels; ++channel_index)
+    //         // {
+    //             output_vector.push_back(row_data[column_index]);// + channel_index]);
+    //         // }
+    //     }
+    // }
+
+    png_bytep* row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+    for(size_t y = 0; y < height; y++)
     {
-        png_read_row(png_ptr, (png_bytep)row_data, NULL);
+        row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png_ptr, info_ptr));
+    }
 
-        //const size_t start_of_current_row = row_index * width;
+    png_read_image(png_ptr, row_pointers);
 
-        for (size_t column_index = 0; column_index < width; ++column_index)
-        {
-            for (size_t channel_index = 0; channel_index < num_channels; ++channel_index)
-            {
-                output_vector.push_back(row_data[column_index + channel_index]);
-            }
-        }
+    // Write to vector
+    for (size_t y = 0; y < height; ++y)
+    {
+        output_vector.insert(output_vector.end(), row_pointers[y], row_pointers[y] + png_get_rowbytes(png_ptr, info_ptr));
     }
 
     // Clean up
-    delete[] row_data;
+
+    // delete[] row_data;
+    for(size_t y = 0; y < height; y++) {
+        free(row_pointers[y]);
+    }
+    free(row_pointers);
+
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
     return 0;
