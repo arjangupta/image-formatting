@@ -153,16 +153,18 @@ int decode_png(uint8_t* png_data,
 
     num_channels = png_get_rowbytes(png_ptr, info_ptr) / (width * (bit_depth/8));
 
-    // Get output_vector ready to store data
-    output_vector.reserve(width * height * num_channels * (bit_depth/8));
-
+    // Create buffers to capture rows of image
     png_bytep* row_pointers = new png_bytep[height];
     for(size_t y = 0; y < height; y++)
     {
         row_pointers[y] = new png_byte[png_get_rowbytes(png_ptr, info_ptr)];
     }
 
+    // Get the decoded data
     png_read_image(png_ptr, row_pointers);
+
+    // Get output_vector ready to store data
+    output_vector.reserve(width * height * num_channels * (bit_depth/8));
 
     // Write to vector
     for (size_t y = 0; y < height; ++y)
