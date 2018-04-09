@@ -32,6 +32,11 @@ TEST(decode_png_test, general_test1)
     std::vector<uint8_t> output_vector;
     int ret = decode_png(png_data, length, width, height, num_channels, output_vector);
 
+    // Print dimensions
+    std::cout << "The width is: " << width << std::endl;
+    std::cout << "The height is: " << height << std::endl;
+    std::cout << "The num_channels is: " << num_channels << std::endl;
+
     // Write the png data to an output file
     std::ofstream output;
     output.open("test/png_output/test_output.data");
