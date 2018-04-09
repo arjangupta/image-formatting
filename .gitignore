@@ -1,5 +1,5 @@
 build/
 cmake/
 3rdparty/build_png/
-test/png_input/
-test/png_output/
+test/decode_png_input/
+test/decode_png_output/

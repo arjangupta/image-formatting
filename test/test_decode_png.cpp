@@ -11,7 +11,7 @@ namespace // anonymous
 TEST(decode_png_test, general_test1)
 {
     // Read data from PNG file
-    std::string input_filepath = "test/png_input/rgba/bald-eagle.png";
+    std::string input_filepath = "test/decode_png_input/rgba/bald-eagle.png";
     std::ifstream fin(input_filepath, std::ios::binary);
 
     ASSERT_TRUE(fin) << "\nCould not open " << input_filepath << "\n";
@@ -39,7 +39,7 @@ TEST(decode_png_test, general_test1)
 
     // Write the png data to an output file
     std::ofstream output;
-    output.open("test/png_output/test_output.data");
+    output.open("test/decode_png_output/test_output.data");
     std::cout << "output_vector.size() is " << output_vector.size() << "\n\n";
     output.write((char*)output_vector.data(), output_vector.size());
     output.close();
