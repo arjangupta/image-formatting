@@ -41,8 +41,6 @@ int decode_png(uint8_t* png_data,
                uint8_t &num_channels, 
                std::vector<uint8_t> &output_vector)
 {
-    std::cout << "PNG DEBUG STATEMENT 1\n";
-
     if ( !png_check_sig(png_data, kPngSignatureLength) )
     {
         return 99;
@@ -115,14 +113,6 @@ int decode_png(uint8_t* png_data,
                 png_set_expand_gray_1_2_4_to_8(png_ptr);
             }
             
-            // Expand tRNS chunks to alpha
-            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-            {
-                // TODO: Remove cout
-                std::cout << "Expanding tRNS chunks to alpha channel" << std::endl;
-                png_set_tRNS_to_alpha(png_ptr);
-                num_channels = 2;
-            }
             else
             {
                 num_channels = 1;
@@ -137,21 +127,11 @@ int decode_png(uint8_t* png_data,
 
         case PNG_COLOR_TYPE_RGB:
             std::cout << "colorType is RGB." << std::endl;
-            // Expand tRNS chunks to alpha
-            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-            {
-                // TODO: Remove cout
-                std::cout << "Expanding tRNS chunks to alpha channel" << std::endl;
-                png_set_tRNS_to_alpha(png_ptr);
-                num_channels = 4;
-            }
-            else
-            {
-                num_channels = 3;
-            }
+            num_channels = 3;
             break;
 
         case PNG_COLOR_TYPE_PALETTE:
+            std::cout << "colorType is palette." << std::endl;
             png_set_palette_to_rgb(png_ptr);
             num_channels = 3;
             break;
@@ -173,6 +153,19 @@ int decode_png(uint8_t* png_data,
     height = height_uint32;
     std::cout << "The height is: " << height << std::endl;
 
+    // TODO: Decide if we want to check for tRNS chunks
+
+    // Expand tRNS chunks to alpha
+    // if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+    // {
+    //     // TODO: Remove cout
+    //     std::cout << "Expanding tRNS chunks to alpha channel" << std::endl;
+    //     png_set_tRNS_to_alpha(png_ptr);
+    //     // num_channels++; ???
+    // }
+
+    // TODO: Decide if we want to make everything have alpha channel
+
     // These color_type don't have an alpha channel then fill it with 0xff.
     // if(color_type == PNG_COLOR_TYPE_RGB ||
     // color_type == PNG_COLOR_TYPE_GRAY ||
@@ -187,7 +180,7 @@ int decode_png(uint8_t* png_data,
 
     const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
-    if ( bytes_per_row != width * num_channels )
+    if ( bytes_per_row != width * num_channels * (bit_depth/8) )
     {
         return 94;
     }
@@ -209,7 +202,7 @@ int decode_png(uint8_t* png_data,
         output_vector.insert(output_vector.end(), row_pointers[y], row_pointers[y] + png_get_rowbytes(png_ptr, info_ptr));
     }
 
-    // Clean up
+    // Clean up - TODO - use delete
     for(size_t y = 0; y < height; y++) {
         free(row_pointers[y]);
     }
