@@ -24,11 +24,10 @@ void read_data_from_input_png(png_structp png_ptr, png_bytep outBytes,
     read_buffer_struct* read_ptr = static_cast<read_buffer_struct*>(png_get_io_ptr(png_ptr));
     if (byteCountToRead > read_ptr->bytes_left)
     {
-        png_error(png_ptr, "read error");
+        png_error(png_ptr, "read error in custom png read function");
     }
     memcpy(outBytes, read_ptr->data, byteCountToRead);
     read_ptr->bytes_left -= byteCountToRead;
-    std::cout << "bytes left to be read: " << read_ptr->bytes_left << std::endl;
     read_ptr->data += byteCountToRead;
 }
 
@@ -94,8 +93,8 @@ int decode_png(uint8_t* png_data,
 
     // TODO: Decide if we want to support 16 bit color.
     // If we want to support it, we should wait till
-    // we can use the Image PixelFormat/DataLayout enums
-    // in this image-compression interface.
+    // we can use the Image::PixelFormat & Image::DataLayout 
+    // enums in this image-compression interface.
     if(bit_depth == 16)
     {
         // TODO: Remove this cout
