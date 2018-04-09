@@ -78,14 +78,14 @@ int decode_png(uint8_t* png_data,
 
     png_read_info(png_ptr, info_ptr);
 
-    png_uint_32 width_uint = 0;
-    png_uint_32 height_uint = 0;
-    int bitDepth = 0;
+    png_uint_32 width_uint32 = 0;
+    png_uint_32 height_uint32 = 0;
+    int bit_depth = 0;
     int colorType = -1;
     png_uint_32 retval = png_get_IHDR(png_ptr, info_ptr,
-                                      &width_uint,
-                                      &height_uint,
-                                      &bitDepth,
+                                      &width_uint32,
+                                      &height_uint32,
+                                      &bit_depth,
                                       &colorType,
                                       NULL, NULL, NULL);
 
@@ -94,20 +94,65 @@ int decode_png(uint8_t* png_data,
        return 96; // TODO: Add error enums & cleanup
     }
 
+    // TODO: Decide if we want to support 16 bit color.
+    // If we want to support it, we should wait till
+    // we can use the Image PixelFormat/DataLayout enums
+    // in this image-compression interface.
+    if(bit_depth == 16)
+    {
+        // TODO: Remove this cout
+        std::cout << "Converting to 8 bit_depth" << std::endl;
+        png_set_strip_16(png_ptr);
+    }
+
+    // TODO: Need unit test case wherever we have couts
     switch (colorType) // TODO: Remove couts
     {
         case PNG_COLOR_TYPE_GRAY:
             std::cout << "colorType is grayscale." << std::endl;
-            num_channels = 1;
+            if (bit_depth < 8)
+            {
+                png_set_expand_gray_1_2_4_to_8(png_ptr);
+            }
+            
+            // Expand tRNS chunks to alpha
+            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+            {
+                // TODO: Remove cout
+                std::cout << "Expanding tRNS chunks to alpha channel" << std::endl;
+                png_set_tRNS_to_alpha(png_ptr);
+                num_channels = 2;
+            }
+            else
+            {
+                num_channels = 1;
+            }
             break;
 
         case PNG_COLOR_TYPE_GRAY_ALPHA:
             std::cout << "colorType is grayscale alpha." << std::endl;
+            // No expansion needed - gray-alpha is always 8 or 16 bit depth
             num_channels = 2;
             break;
 
         case PNG_COLOR_TYPE_RGB:
             std::cout << "colorType is RGB." << std::endl;
+            // Expand tRNS chunks to alpha
+            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+            {
+                // TODO: Remove cout
+                std::cout << "Expanding tRNS chunks to alpha channel" << std::endl;
+                png_set_tRNS_to_alpha(png_ptr);
+                num_channels = 4;
+            }
+            else
+            {
+                num_channels = 3;
+            }
+            break;
+
+        case PNG_COLOR_TYPE_PALETTE:
+            png_set_palette_to_rgb(png_ptr);
             num_channels = 3;
             break;
 
@@ -122,44 +167,30 @@ int decode_png(uint8_t* png_data,
     }
 
     // TODO: Move these couts to test exec
-    std::cout << "The bit depth is: " << bitDepth << std::endl;
-    width = width_uint;
+    std::cout << "The bit depth is: " << bit_depth << std::endl;
+    width = width_uint32;
     std::cout << "The width is: " << width << std::endl;
-    height = height_uint;
+    height = height_uint32;
     std::cout << "The height is: " << height << std::endl;
 
-  //     if(bit_depth == 16)
-  //   png_set_strip_16(png);
+    // These color_type don't have an alpha channel then fill it with 0xff.
+    // if(color_type == PNG_COLOR_TYPE_RGB ||
+    // color_type == PNG_COLOR_TYPE_GRAY ||
+    // color_type == PNG_COLOR_TYPE_PALETTE)
+    // png_set_filler(png_ptr, 0xFF, PNG_FILLER_AFTER);
 
-  // if(color_type == PNG_COLOR_TYPE_PALETTE)
-  //   png_set_palette_to_rgb(png);
+    // if(color_type == PNG_COLOR_TYPE_GRAY ||
+    // color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    // png_set_gray_to_rgb(png_ptr);
 
-  // // PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
-  // if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-  //   png_set_expand_gray_1_2_4_to_8(png);
+    png_read_update_info(png_ptr, info_ptr);
 
-  // if(png_get_valid(png, info, PNG_INFO_tRNS))
-  //   png_set_tRNS_to_alpha(png);
+    const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
 
-  // These color_type don't have an alpha channel then fill it with 0xff.
-  // if(color_type == PNG_COLOR_TYPE_RGB ||
-  //    color_type == PNG_COLOR_TYPE_GRAY ||
-  //    color_type == PNG_COLOR_TYPE_PALETTE)
-  //   png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
-
-  // if(color_type == PNG_COLOR_TYPE_GRAY ||
-  //    color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-  //   png_set_gray_to_rgb(png);
-
-  // png_read_update_info(png, info);
-
-    // const png_uint_32 bytes_per_row = png_get_rowbytes(png_ptr, info_ptr);
-    // uint8_t* row_data = new uint8_t[bytes_per_row];
-
-    // if ( bytes_per_row != width * num_channels )
-    // {
-    //     return 94;
-    // }
+    if ( bytes_per_row != width * num_channels )
+    {
+        return 94;
+    }
 
     // Get output_vector ready to store data
     output_vector.reserve(width * height * num_channels * (bit_depth/8));
@@ -179,8 +210,6 @@ int decode_png(uint8_t* png_data,
     }
 
     // Clean up
-
-    // delete[] row_data;
     for(size_t y = 0; y < height; y++) {
         free(row_pointers[y]);
     }
