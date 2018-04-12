@@ -95,10 +95,7 @@ int decode_png(uint8_t* png_data,
     width = width_uint32;
     height = height_uint32;
 
-    // TODO: Decide if we want to support 16 bit color.
-    // If we want to support it, we should wait till
-    // we can use the Image::PixelFormat & Image::DataLayout 
-    // enums in this image-compression interface.
+    // Not supporting 16 bit-depth color
     if(bit_depth == 16)
     {
         png_set_strip_16(png_ptr);
