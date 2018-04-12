@@ -10,6 +10,8 @@ extern "C"
 namespace
 {
 
+// --- Auxiliary functions for decode_png() ---
+
 const size_t kPngSignatureLength = 8;
 
 struct read_buffer_struct 
@@ -18,9 +20,13 @@ struct read_buffer_struct
     size_t bytes_left; 
 };
 
-void read_data_from_input_png(png_structp png_ptr, png_bytep outBytes,
-   png_size_t byteCountToRead)
+void read_data_from_input_png(png_structp png_ptr, 
+                              png_bytep outBytes,
+                              png_size_t byteCountToRead)
 {
+    // `png_get_io_ptr()` returns a void pointer, and it is allowed to be casted only 
+    // to the object type that you pass in as the second argument to `png_set_write_fn()`,
+    // which I am doing within in `encodePNG()`
     read_buffer_struct* read_ptr = static_cast<read_buffer_struct*>(png_get_io_ptr(png_ptr));
     if (byteCountToRead > read_ptr->bytes_left)
     {
@@ -31,7 +37,7 @@ void read_data_from_input_png(png_structp png_ptr, png_bytep outBytes,
     read_ptr->data += byteCountToRead;
 }
 
-}
+} // end anonymous namespace
 
 int decode_png(uint8_t* png_data,
                size_t png_length,
