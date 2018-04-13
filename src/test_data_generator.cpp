@@ -17,6 +17,25 @@
 #include <string>
 #include <vector>
 
+void generate_test_data(std::string test_input_dir, std::string sub_dir, std::string file_name)
+{
+	std::string full_path = test_input_dir + sub_dir + "/" + file_name + ".png";
+	cv::Mat png_image = cv::imread(full_path);
+	
+	// Dump data to test gen folder
+	std::string test_generation_dir = DATA_DIR;
+	test_generation_dir.append("generated_test_data/");
+	std::vector<int> imwrite_params;
+	imwrite_params.push_back(CV_IMWRITE_PXM_BINARY);
+	imwrite_params.push_back(1);
+	bool succeeded_to_generate = cv::imwrite((test_generation_dir + sub_dir + "/" + file_name + ".ppm"), png_image, imwrite_params);
+}
+
+void encode_test_data()
+{
+	std::cout << "Hello Solar System" << std::endl;
+}
+
 int main()
 {
 	std::string test_input_dir = DATA_DIR;
