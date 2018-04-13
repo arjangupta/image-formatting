@@ -3,3 +3,4 @@ cmake/
 3rdparty/build_png/
 test/decode_png_input/
 test/decode_png_output/
+test/generated_test_data/
