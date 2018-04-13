@@ -48,19 +48,19 @@ set_target_properties( png PROPERTIES
     IMPORTED_LOCATION ${PNG_LIB_STATIC}
 )
 
-# Add library for generating pre-saved openCV test data
-add_library( testdata_opencvgen STATIC src/generate_test_data.cpp ) 
-
 # Create our library
 include_directories( src )
 add_library(decode-png STATIC src/decode_png.cpp )
+
+# Add path to test_dir
+add_definitions(-DDATA_DIR="${CMAKE_SOURCE_DIR}/test/")
 
 # Test executable
 add_executable( test-decode-png test/test_decode_png.cpp )
 add_dependencies( test-decode-png GTest::main z png decode-png)
 target_link_libraries( test-decode-png GTest::main z png decode-png )
 
-# Executable to call the openCV test data generator
-add_executable( test_data_generator test/generate_test_data_exec.cpp )
+# Executable for the openCV test data generator
+add_executable( test_data_generator src/test_data_generator.cpp )
 add_dependencies( test_data_generator ${OpenCV_LIBS} )
 target_link_libraries( test_data_generator ${OpenCV_LIBS} )
