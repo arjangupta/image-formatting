@@ -17,6 +17,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall")
 # Get GTest
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
+hunter_add_package(OpenCV)
+find_package(OpenCV CONFIG REQUIRED)
 
 # Get static zlib ready to be added
 find_library( Z_LIB_STATIC
@@ -46,6 +48,9 @@ set_target_properties( png PROPERTIES
     IMPORTED_LOCATION ${PNG_LIB_STATIC}
 )
 
+# Add library for generating pre-saved openCV test data
+add_library( testdata_opencvgen STATIC src/generate_test_data.cpp ) 
+
 # Create our library
 include_directories( src )
 add_library(decode-png STATIC src/decode_png.cpp )
@@ -54,3 +59,8 @@ add_library(decode-png STATIC src/decode_png.cpp )
 add_executable( test-decode-png test/test_decode_png.cpp )
 add_dependencies( test-decode-png GTest::main z png decode-png)
 target_link_libraries( test-decode-png GTest::main z png decode-png )
+
+# Executable to call the openCV test data generator
+add_executable( test_data_generator test/generate_test_data_exec.cpp )
+add_dependencies( test_data_generator ${OpenCV_LIBS} )
+target_link_libraries( test_data_generator ${OpenCV_LIBS} )

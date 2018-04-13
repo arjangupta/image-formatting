@@ -10,7 +10,7 @@ extern "C"
 namespace
 {
 
-// --- Auxiliary functions for decode_png() ---
+// --- Auxiliary functions for decode_png() --- //
 
 const size_t kPngSignatureLength = 8;
 
