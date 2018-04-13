@@ -5,13 +5,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-// System includes for checking paths
-#include <sys/types.h>
-#include <sys/stat.h>
-
-// C-header include for directory stream
-#include <dirent.h>
-
 // Other cpp std lib headers
 #include <iostream>
 #include <string>
