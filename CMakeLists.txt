@@ -60,7 +60,12 @@ add_executable( test-decode-png test/test_decode_png.cpp )
 add_dependencies( test-decode-png GTest::main z png decode-png)
 target_link_libraries( test-decode-png GTest::main z png decode-png )
 
-# Executable for the openCV test data generator
+# Executable for the openCV ppm test data generator
 add_executable( test_data_generator src/test_data_generator.cpp )
 add_dependencies( test_data_generator ${OpenCV_LIBS} )
 target_link_libraries( test_data_generator ${OpenCV_LIBS} )
+
+#Executable for the openCV scaling test data generator
+add_executable(opencv_scaling_generator src/opencv_scaling_generator)
+add_dependencies(opencv_scaling_generator ${OpenCV_LIBS})
+target_link_libraries(opencv_scaling_generator ${OpenCV_LIBS})
