@@ -9,7 +9,7 @@
 #include <vector>
 
 
-bool opencv_scale(std::string image_dir, std::string file_name, size_t dst_cols, 
+void opencv_scale(std::string image_dir, std::string file_name, size_t dst_cols, 
                 size_t dst_rows, std::string output_dir, int interpolation_type)
 {
     cv::Mat input_mat = cv::imread(image_dir + file_name);
@@ -21,7 +21,7 @@ bool opencv_scale(std::string image_dir, std::string file_name, size_t dst_cols,
     std::vector<int> imwrite_params;
     imwrite_params.push_back(CV_IMWRITE_JPEG_QUALITY);
     imwrite_params.push_back(100);
-    return cv::imwrite(output_dir + file_name, output_mat, imwrite_params);
+    cv::imwrite(output_dir + file_name, output_mat, imwrite_params);
 }
 
 int main()
