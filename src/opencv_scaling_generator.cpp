@@ -12,14 +12,14 @@
 bool opencv_scale(std::string image_dir, std::string file_name, size_t dst_cols, 
                 size_t dst_rows, std::string output_dir, int interpolation_type)
 {
-    cv::Mat input_mat = cv::imread(image_path);
+    cv::Mat input_mat = cv::imread(image_dir + file_name);
 
     cv::Size dst_size(dst_cols, dst_rows);
     cv::Mat output_mat;
-    cv::resize(input_mat, dst_size, interpolation_type);
+    cv::resize(input_mat, output_mat, dst_size, interpolation_type);
 
     std::vector<int> imwrite_params;
-    imwrite_params.push_back(CV_IMWRITE_JPEG_COMPRESSION);
+    imwrite_params.push_back(CV_IMWRITE_JPEG_QUALITY);
     imwrite_params.push_back(100);
     return cv::imwrite(output_dir + file_name, output_mat, imwrite_params);
 }
@@ -33,8 +33,8 @@ int main()
     output_path.append("opencv_scale_output/");
 
     //earth.jpg is 1248 × 1280
-    opencv_scale(test_input_dir, "earth.jpg", 624, 640, output_path, INTER_LINEAR);
-    opencv_scale(test_input_dir, "earth.jpg", 624, 640, output_path, INTER_NEAREST);
+    opencv_scale(test_input_dir, "earth.jpg", 624, 640, output_path, cv::INTER_LINEAR);
+    opencv_scale(test_input_dir, "earth.jpg", 624, 640, output_path, cv::INTER_NEAREST);
 
     return 0;
 }
