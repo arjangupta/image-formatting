@@ -21,7 +21,7 @@ void generate_test_data(std::string test_input_dir, std::string sub_dir, std::st
 	std::vector<int> imwrite_params;
 	imwrite_params.push_back(CV_IMWRITE_PXM_BINARY);
 	imwrite_params.push_back(1);
-	bool succeeded_to_generate = cv::imwrite((test_generation_dir + sub_dir + "/" + file_name + ".ppm"), png_image, imwrite_params);
+	cv::imwrite((test_generation_dir + sub_dir + "/" + file_name + ".ppm"), png_image, imwrite_params);
 }
 
 void encode_test_data()
