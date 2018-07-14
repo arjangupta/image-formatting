@@ -42,7 +42,7 @@ bool writeVectorToFile(std::string const& file_path,
     return true;
 }
 
-void opencvScale(std::string image_path, size_t dst_cols, size_t dst_rows,
+bool opencvScale(std::string image_path, size_t dst_cols, size_t dst_rows,
                  std::string output_path, int interpolation_type)
 {
     cv::Mat input_mat = cv::imread(image_path);
@@ -51,7 +51,7 @@ void opencvScale(std::string image_path, size_t dst_cols, size_t dst_rows,
     cv::Mat output_mat;
     cv::resize(input_mat, output_mat, dst_size, interpolation_type);
 
-    writeVectorToFile(output_path, output_mat);
+    return writeVectorToFile(output_path, output_mat);
 }
 
 int main()
@@ -64,11 +64,21 @@ int main()
 
     //earth.jpg is 1248 × 1280
     //bilinear
-    opencvScale(test_input_dir + "earth.jpg", 624, 640, 
+    bool scale_success;
+    scale_success = opencvScale(test_input_dir + "earth.jpg", 624, 640, 
                  output_path + "earth_halfscale_bilinear.data", cv::INTER_LINEAR);
+    if (!scale_success)
+    {
+        std::cout << "OpenCV scaling failed (earth_halfscale_bilinear.data)" << std::endl;
+    }
+
     //nearest
-    opencvScale(test_input_dir + "earth.jpg", 624, 640,
+    scale_success = opencvScale(test_input_dir + "earth.jpg", 624, 640,
                  output_path + "earth_halfscale_nearestneighbor.data", cv::INTER_NEAREST);
+    if (!scale_success)
+    {
+        std::cout << "OpenCV scaling failed (earth_halfscale_nearestneighbor.data)" << std::endl;
+    }
 
     return 0;
 }
