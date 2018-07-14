@@ -51,12 +51,6 @@ void opencvScale(std::string image_path, size_t dst_cols, size_t dst_rows,
     cv::Mat output_mat;
     cv::resize(input_mat, output_mat, dst_size, interpolation_type);
 
-    // std::vector<uint8_t> image_data;
-    // image_data.insert(image_data.begin(), output_mat.ptr(), 
-    //                   output_mat.ptr() + (output_mat.cols * 
-    //                                       output_mat.rows * 
-    //                                       output_mat.elemSize()));
-
     writeVectorToFile(output_path, output_mat);
 }
 
