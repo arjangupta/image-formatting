@@ -7,21 +7,55 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
-
-void opencv_scale(std::string image_dir, std::string file_name, size_t dst_cols, 
-                size_t dst_rows, std::string output_dir, int interpolation_type)
+bool writeVectorToFile(std::string const& file_path,
+                       std::vector<uint8_t> const& input_data)
 {
-    cv::Mat input_mat = cv::imread(image_dir + file_name);
+    //Open file
+    std::ofstream write_stream(file_path);
+    if (!write_stream)
+    {
+        return false;
+    }
+
+    //Check validity of vector
+    if ( input_data.size() == 0 )
+    {
+        return false;
+    }
+    
+    //Copy ByteSequence to file
+    std::copy(input_data.begin(),
+              input_data.end(),
+              std::ostreambuf_iterator<char>(write_stream));
+    write_stream.close();
+    
+    //Check file closure
+    if (write_stream.fail())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void opencvScale(std::string image_path, size_t dst_cols, size_t dst_rows,
+                 std::string output_path, int interpolation_type)
+{
+    cv::Mat input_mat = cv::imread(image_path);
 
     cv::Size dst_size(dst_cols, dst_rows);
     cv::Mat output_mat;
     cv::resize(input_mat, output_mat, dst_size, interpolation_type);
 
-    std::vector<int> imwrite_params;
-    imwrite_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    imwrite_params.push_back(100);
-    cv::imwrite(output_dir + file_name, output_mat, imwrite_params);
+    std::vector<uint8_t> image_data;
+    image_data.insert(image_data.begin(), output_mat.ptr(), 
+                      output_mat.ptr() + (output_mat.cols * 
+                                          output_mat.rows * 
+                                          output_mat.elemSize()));
+
+    writeVectorToFile(output_path, image_data);
 }
 
 int main()
@@ -33,8 +67,12 @@ int main()
     output_path.append("opencv_scale_output/");
 
     //earth.jpg is 1248 × 1280
-    opencv_scale(test_input_dir, "earth.jpg", 624, 640, output_path, cv::INTER_LINEAR);
-    opencv_scale(test_input_dir, "earth.jpg", 624, 640, output_path, cv::INTER_NEAREST);
+    //bilinear
+    opencvScale(test_input_dir + "earth.jpg", 624, 640, 
+                 output_path + "earth_halfscale_bilinear.data", cv::INTER_LINEAR);
+    //nearest
+    opencvScale(test_input_dir + "earth.jpg", 624, 640,
+                 output_path + "earth_halfscale_nearestneighbor.data", cv::INTER_NEAREST);
 
     return 0;
 }
